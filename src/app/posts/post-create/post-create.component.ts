@@ -1,6 +1,7 @@
 import { Component, OnInit, EventEmitter, Output} from '@angular/core';
-import { Post } from '../../posts/post.model';
 import { NgForm, FormControl, Validators } from '@angular/forms';
+import { PostsService } from '../../posts/posts.service';
+import { Post } from '../post.model';
 
 @Component({
 	selector: 'app-post-create',
@@ -13,9 +14,11 @@ export class PostCreateComponent implements OnInit {
 	enteredTitle = '';
 	enteredContent = '';
 	newPost = 'No content';
-	@Output() postCreated = new EventEmitter<Post>();
-	constructor() { }
 
+	// injecting the PostsService
+	constructor(public postsService: PostsService ) {}
+
+	// ng on init dibiarkan kosong karena butuh yang hanya akan dieksekusi saat create post baru, bukan setiap create component
 	ngOnInit() {
 	}
 
@@ -23,10 +26,6 @@ export class PostCreateComponent implements OnInit {
 		if (form.invalid) {
 			return;
 		}
-		const post: Post = {
-			title : form.value.enteredTitle,
-			content : form.value.enteredContent
-		};
-		this.postCreated.emit(post);
+		this.postsService.addPosts(form.value.enteredTitle,form.value.enteredContent);
 	}
 }

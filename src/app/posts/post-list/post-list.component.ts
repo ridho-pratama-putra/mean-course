@@ -1,29 +1,35 @@
-import { Component, OnInit , Input} from '@angular/core';
+import { Component, OnInit , Input, OnDestroy} from '@angular/core';
 import { Post }from '../../posts/post.model';
-import { PostsService }from '../../posts/posts.service';
+import { PostsService } from '../../posts/posts.service';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-post-list',
 	templateUrl: './post-list.component.html',
 	styleUrls: ['./post-list.component.css']
 })
-export class PostListComponent implements OnInit {
+export class PostListComponent implements OnInit, OnDestroy{
 	
 	// define property in class (old way)
 	// postsService: PostsService;
 	
-	@Input() posts: Post[] = [
-	// {title: "First post",content: "this is the content of the First post"},
-	// {title: "Second post",content: "this is the content of the Second post"},
-	// {title: "Third post",content: "this is the content of the Third post"}
-	]
+	posts: Post[] = []
+	private postsSubscription: Subscription;
 	
 	// shortcut way to define property in class is add public keyword in constructor's parameter
 	constructor(public postsService: PostsService) { 
 
 	}
 
+	/*will be executed when angular create component*/
 	ngOnInit() {
+		this.posts = this.postsService.getPosts();
+		this.postsSubscription = this.postsService.getPostUpdateListener()
+			.subscribe((posts: Post[]) => {this.posts = posts})
+	}
+
+	ngOnDestroy(){
+		this.postsSubscription.unsubscribe();
 	}
 
 }
