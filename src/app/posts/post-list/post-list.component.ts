@@ -15,6 +15,7 @@ export class PostListComponent implements OnInit, OnDestroy{
 	
 	posts: Post[] = []
 	private postsSubscription: Subscription;
+	isLoading = false;
 	
 	// shortcut way to define property in class is add public keyword in constructor's parameter
 	constructor(public postsService: PostsService) { 
@@ -23,9 +24,11 @@ export class PostListComponent implements OnInit, OnDestroy{
 
 	/*will be executed when angular create component*/
 	ngOnInit() {
-		this.postsService.getPosts();
+		this.postsService.getPosts(); // just trigger http request
+		this.isLoading = true;
 		this.postsSubscription = this.postsService.getPostUpdateListener()
 			.subscribe((posts: Post[]) => {
+				this.isLoading = false;
 				this.posts = posts
 			})
 	}
