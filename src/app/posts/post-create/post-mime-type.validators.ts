@@ -9,7 +9,7 @@ import { Observable , Observer } from "rxjs";
 // because they are generic so we can clear about which value they will eventually yield
 // key yang di return adalah error code 
 // if validator return null the value is trated to be valid
-// baik promise atau observable punya return dengan format <{[key:string]: any}> maksunya adalah Promise/Observable akan punya property key yang bisa diinterpretasikan sebagai string dan tidak peduli namanya. square bracket tidak mengindikasikan array, hanya menandakan kalau itu dynamic property. dan bagian any nya adalah value nya
+// baik promise atau observable punya return dengan format <{[key :string]: any}> maksunya adalah Promise/Observable akan punya property key yang bisa diinterpretasikan sebagai string dan tidak peduli namanya. square bracket tidak mengindikasikan array, hanya menandakan kalau itu dynamic property. dan bagian any nya adalah value nya
 
 export const mimeType = (control : AbstractControl) : Promise<{[key:string] : any}> | Observable<{[key:string] : any}> =>{
     const file = control.value as File;
@@ -20,7 +20,7 @@ export const mimeType = (control : AbstractControl) : Promise<{[key:string] : an
     // observable tak es function as argument, and that function automatically get an observer, that passed in by rxjs and its type of observer
     // so observer nya rxjs harus import juga 
     // observer adalah tool untuk kontrol saat observable emits new data
-    const fileReaderObservable = Observable.create((observer : Observer) => {
+    const fileReaderObservable = Observable.create((observer : Observer<{[key:string] : any}>) => {
         fileReader.addEventListener("loadend",  () => {
             // will executed once we are done, we do the validation process
         });
