@@ -15,8 +15,18 @@ export const mimeType = (control : AbstractControl) : Promise<{[key:string] : an
     const file = control.value as File;
     const fileReader = new FileReader();
 
-    // thanks to rxjs
+    // by handled rxjs
+    // with create, we can create observable from scratch
+    // observable tak es function as argument, and that function automatically get an observer, that passed in by rxjs and its type of observer
+    // so observer nya rxjs harus import juga 
+    // observer adalah tool untuk kontrol saat observable emits new data
     const fileReaderObservable = Observable.create((observer : Observer) => {
+        fileReader.addEventListener("loadend",  () => {
+            // will executed once we are done, we do the validation process
+        });
+
+        // this will allow us to access mime type
+        fileReader.readAsArrayBuffer(file);
 
     });
 
