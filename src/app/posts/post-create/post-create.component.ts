@@ -1,9 +1,8 @@
 import { Component, OnInit, EventEmitter, Output} from '@angular/core';
-import { NgForm, FormControl, Validators } from '@angular/forms';
+import { NgForm, FormControl, Validators ,FormGroup} from '@angular/forms';
 import { PostsService } from '../../posts/posts.service';
 import { Post } from '../post.model';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import {Location} from '@angular/common';
 
 @Component({
 	selector: 'app-post-create',
@@ -20,12 +19,17 @@ export class PostCreateComponent implements OnInit {
 	private postId = null;
 	private post: Post;
 	isLoading = false;
+	form : FormGroup;
 
 	// injecting the PostsService
-	constructor(public postsService: PostsService , public route: ActivatedRoute , private location: Location) {}
+	constructor(public postsService: PostsService , public route: ActivatedRoute ) {}
 
 	
 	ngOnInit() {
+		this.form = new FormGroup({
+			title: new FormControl(null, {validators: [Validators.required,Validators.minLength(3)]}),
+			content: new FormControl(null, {validators: [Validators.required]})
+		})
 		this.route.paramMap.subscribe((paramMap: ParamMap) => {
 			if(paramMap.has('postId')){
 				this.mode = 'edit';
@@ -37,7 +41,8 @@ export class PostCreateComponent implements OnInit {
 						id: postData._id,
 						title: postData.title,
 						content: postData.content
-					};  
+					};
+					this.form.setValue({title:this.post.title,content: this.post.content})
 				});
 			}else{
 				this.mode = 'create';
@@ -47,17 +52,17 @@ export class PostCreateComponent implements OnInit {
 
 	// sebelumnya adalah on add, diganti ke onsave karena biar bisa handle update juga, nggk hanya create
 	// onAddPost( form: NgForm ){
-	onSavePost( form: NgForm ){
-		if (form.invalid) {
+	onSavePost(){
+		if (this.form.invalid) {
 			return;
 		}
 		this.isLoading = true;
 		if(this.mode == 'create'){
 			this.isLoading = false;
-			this.postsService.addPost(form.value.enteredTitle,form.value.enteredContent);
+			this.postsService.addPost(this.form.value.enteredTitle,this.form.value.enteredContent);
 		}else{
-			this.postsService.updatePost(this.postId , form.value.enteredTitle, form.value.enteredContent)
+			this.postsService.updatePost(this.postId , this.form.value.enteredTitle, this.form.value.enteredContent)
 		}
-		form.resetForm();		
+		this.form.reset();		
 	}
 }
