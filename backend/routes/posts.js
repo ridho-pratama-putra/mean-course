@@ -1,8 +1,35 @@
 const express = require("express");
 const router = express.Router();
-const Post = require('../models/post')
+const Post = require('../models/post');
+const multer = require('multer');
 
-router.post("", (req, res, next) => {
+// helper contant to get mime type
+const MIME_TYPE_MAP = {
+    'image/png' : 'png',
+    'image/jpeg' : 'jpeg',
+    'image/jpg' : 'jpg'
+}
+
+const storage = multer.diskStorage({
+    destination : (req, file, callback) => {
+        const isValid = MIME_TYPE_MAP[file.mimetype];
+        let error = new Error("Invalid mime type");
+        if(isValid){
+            error = null;
+        }
+
+        // path is relative to server.js
+        // null is whether detect error
+        callback(error,"backend/images")
+    },
+    filename: (req, file, callback) => {
+        const name  = file.originalname.toLowerCase().split(" ").join("-");
+        const extension = MIME_TYPE_MAP[file.mimetype];
+        callback(null, name+'-'+Date.now()+'.'+ext);
+    }
+});
+
+router.post("", multer(storage).single("image") ,(req, res, next) => {
 
     // pass data we need for the schema as object, havng title and content 
     const post = new Post({
