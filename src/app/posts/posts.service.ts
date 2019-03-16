@@ -38,17 +38,30 @@ export class PostsService {
 		return this.postsUpdated.asObservable();
 	}
 
-	addPost(title : string, content : string){
-		const post: Post = { id: null, title : title,content : content };
+	addPost(title : string, content : string, image : File){
+		const postData = new FormData();
+		postData.append("title",title);
+		postData.append("content",content);
 
+		// third is file name provide to backend. fourth is title to give image name
+		postData.append("image",image, title);
+
+		// angular http will detect that we got a non-JSON data (because we send image)
 		this.http
-			.post<{ message: string , createdPostId: string}>("http://localhost:3000/api/posts", post)
+			.post<{ message: string , createdPostId: string}>
+				(	
+					"http://localhost:3000/api/posts", 
+					postData
+				)
 			.subscribe(responseData => {
-				// console.log(responseData);
-				// const createdId = 
-				post.id = responseData.createdPostId
-				this.posts.push(post)
-				this.postsUpdated.next([...this.posts])
+				const post: Post = {
+					id: responseData.createdPostId,
+					title: title,
+					content: content
+				};
+				this.posts.push(post);
+				this.postsUpdated.next([...this.posts]);
+				this.router.navigate(['/'])
 			})
 		// console.log(this.posts)
 	}

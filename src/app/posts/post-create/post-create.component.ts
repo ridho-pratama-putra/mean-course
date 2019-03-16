@@ -62,11 +62,18 @@ export class PostCreateComponent implements OnInit {
 		this.isLoading = true;
 		if(this.mode == 'create'){
 			this.isLoading = false;
-			this.postsService.addPost(this.form.value.enteredTitle,this.form.value.enteredContent);
+			this.postsService.addPost(
+				this.form.value.title,
+				this.form.value.content,
+				this.form.value.image
+			);
+			this.form.reset();
 		}else{
-			this.postsService.updatePost(this.postId , this.form.value.enteredTitle, this.form.value.enteredContent)
+			this.postsService.updatePost(this.postId , this.form.value.title, this.form.value.content);
+			this.form.reset();
+
 		}
-		this.form.reset();		
+		
 	}
 
 	onImagePicked(event: Event){
