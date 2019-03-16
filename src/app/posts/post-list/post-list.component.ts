@@ -29,7 +29,7 @@ export class PostListComponent implements OnInit, OnDestroy{
 		this.postsSubscription = this.postsService.getPostUpdateListener()
 			.subscribe((posts: Post[]) => {
 				this.isLoading = false;
-				this.posts = posts
+				this.posts = posts;
 			})
 	}
 
