@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { HttpClientModule } from '@angular/common/http'
 import { 
+	MatIconModule,
 	MatInputModule, 
 	MatCardModule, 
 	MatButtonModule,
@@ -31,6 +32,7 @@ import { AppRoutingModule } from './app-routing.module';
 		AppRoutingModule,
 		ReactiveFormsModule,
 		BrowserAnimationsModule,
+		MatIconModule,
 		MatInputModule,
 		MatCardModule,
 		MatButtonModule,

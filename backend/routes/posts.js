@@ -57,7 +57,7 @@ router.get('', (req, res, next) => {
             res.status(200).json({
                 message: "",
                 posts: documents
-            })
+            });
         })
         .catch(err => {
             console.log(err)
@@ -67,7 +67,7 @@ router.get('', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
     Post.findById(req.params.id)
         .then(post => {
-            // if document is exist
+            // if document is exist 
             if (post){
                 res.status(200).json(post)
             }else{
@@ -89,11 +89,19 @@ router.delete('/:id',(req, res, next) => {
         })
 })
 
-router.put("/:id",(req,res,next) => {
+// ada multer untuk extrak image
+router.put("/:id", multer({storage : storage}).single("image") , (req,res,next) => {
+    let imagePath = req.body.imagePath;
+    
+    if(req.file){
+        const url = req.protocol + "://" + req.get("host");
+        imagePath = url + "/images/" +  req.file.filename;
+    }
     const post = new Post({
         _id: req.body.id,
         title: req.body.title,
         content: req.body.content,
+        imagePath: imagePath
     });
     Post.updateOne({_id:req.params.id},post)
         .then(result => {

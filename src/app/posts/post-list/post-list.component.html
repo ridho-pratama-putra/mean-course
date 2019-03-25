@@ -27,12 +27,20 @@
 		<mat-card-subtitle>{{ post.title }}</mat-card-subtitle>
 	</mat-card-header>
 	<img mat-card-image [src]="post.imagePath" [alt]="post.title" class="post-image">
+	<mat-card-actions layout="row" layout-align="start center">
+		<button mat-icon-button color="accent">
+			<mat-icon>favorite</mat-icon>
+		</button>
+		<button mat-icon-button color="primary">
+			<mat-icon >share</mat-icon>
+		</button>
+	</mat-card-actions>
 	<mat-card-content>
 		<p>{{post.content}}</p>		
 	</mat-card-content>
 	<mat-card-actions>
-			<a mat-button color="primary" [routerLink]="['/edit', post.id]" >EDIT</a>
-			<button mat-button color="warn" (click)="onDeletePost(post.id)">DELETE</button>
+		<a mat-button color="primary" class="button-action-right" [routerLink]="['/edit', post.id]" >EDIT</a>
+		<button mat-button color="warn" class="button-action-right" (click)="onDeletePost(post.id)">DELETE</button>
 	</mat-card-actions>
 </mat-card>
 </div>

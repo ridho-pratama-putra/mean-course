@@ -30,7 +30,7 @@ export class PostListComponent implements OnInit, OnDestroy{
 			.subscribe((posts: Post[]) => {
 				this.isLoading = false;
 				this.posts = posts;
-			})
+			});
 	}
 
 	ngOnDestroy(){

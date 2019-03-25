@@ -1,5 +1,5 @@
 import { AbstractControl } from "@angular/forms";
-import { Observable , Observer } from "rxjs";
+import { Observable , Observer , of} from "rxjs";
 
 // below is asynchronous validator . we have to register some event which the reader will be fire when its done reading
 // and parsing file little bit longer and not to block javascript ececution
@@ -12,6 +12,9 @@ import { Observable , Observer } from "rxjs";
 // baik promise atau observable punya return dengan format <{[key :string]: any}> maksunya adalah Promise/Observable akan punya property key yang bisa diinterpretasikan sebagai string dan tidak peduli namanya. square bracket tidak mengindikasikan array, hanya menandakan kalau itu dynamic property. dan bagian any nya adalah value nya
 
 export const mimeType = (control : AbstractControl) : Promise<{[key:string] : any}> | Observable<{[key:string] : any}> =>{
+    if(typeof(control.value === 'string')){
+      return of(null);
+    }
     const file = control.value as File;
     const fileReader = new FileReader();
 
