@@ -15,10 +15,11 @@ export class PostsService {
 	constructor(private http: HttpClient, private router: Router){}
 
 	// to retrieve the posts
-	getPosts(){
+	getPosts(postPerPage: number , currentPage: number){
+		const queryParams = `?pageSize=${postPerPage}&page=${currentPage}`;
 		// dijadikan any karena id di mongodb adlaah _id. karena post di angular bentuknya id tapi dari database _id. jadi dibikin any dulu. lalu ditransforming
 		// di transforming biar cocok sama tatanan data di angular(di post model)
-		this.http.get <{message: string, posts: any}>('http://localhost:3000/api/posts')
+		this.http.get <{message: string, posts: any}>('http://localhost:3000/api/posts' + queryParams)
 			.pipe(map((postedData) => {
 				return postedData.posts.map(post => {
 					return {
