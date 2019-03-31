@@ -19,7 +19,7 @@ export class PostsService {
 		const queryParams = `?pageSize=${postPerPage}&page=${currentPage}`;
 		// dijadikan any karena id di mongodb adlaah _id. karena post di angular bentuknya id tapi dari database _id. jadi dibikin any dulu. lalu ditransforming
 		// di transforming biar cocok sama tatanan data di angular(di post model)
-		this.http.get <{message: string, posts: any, maxPost: number}>('http://localhost:3000/api/posts' + queryParams)
+		this.http.get <{message: string, posts: any, maxPosts: number}>('http://localhost:3000/api/posts' + queryParams)
 			.pipe(map((postedData) => {
 				return {
 					posts: postedData.posts.map(post => {
@@ -30,12 +30,17 @@ export class PostsService {
 							imagePath: post.imagePath
 						};
 					}),
-					maxPosts: postedData.maxPost
+					maxPosts: postedData.maxPosts
 				};
 			}))
 			.subscribe((transformedPosts) => {
 				this.posts = transformedPosts.posts;
-				this.postsUpdated.next({posts: [...this.posts] , postCount: transformedPosts.maxPosts});
+				this.postsUpdated.next(
+					{
+						posts: [...this.posts] , 
+						postCount: transformedPosts.maxPosts
+					}
+					);
 			});
 	}
 
@@ -56,26 +61,15 @@ export class PostsService {
 		this.http
 			.post<{ message: string , post: Post}>("http://localhost:3000/api/posts", postData)
 			.subscribe(responseData => {
-				const post: Post = {
-					id: responseData.post.id,
-					title: responseData.post.title,
-					content: responseData.post.content,
-					imagePath: responseData.post.imagePath
-				};
-				this.posts.push(post);
-				this.postsUpdated.next([...this.posts]);
+				
 				this.router.navigate(['/'])
 			})
 		// console.log(this.posts)
 	}
 
 	deletePost(postId: string){
-		this.http.delete("http://localhost:3000/api/posts/"+postId)
-			.subscribe(() => {
-				const updatedPostAfterDelete = this.posts.filter(post => post.id !== postId)
-				this.posts = updatedPostAfterDelete
-				this.postsUpdated.next([...this.posts])
-			})
+		// subscribe nya dipindah ke postlistcomp
+		return this.http.delete("http://localhost:3000/api/posts/"+postId);
 	}
 
 	updatePost(id: string, title:string, content:string, image: File | string){
@@ -97,18 +91,7 @@ export class PostsService {
 		
 		this.http.put("http://localhost:3000/api/posts/"+id,postData)
 			.subscribe(response => {
-				// post sisi client yang belum diupdate
-				const updatedPost = [...this.posts];
-				const oldPostIndex = updatedPost.findIndex(p => p.id === id);
-				const post: Post = {
-					id:id,
-					title:title,
-					content:content,
-					imagePath:""
-				};
-				updatedPost[oldPostIndex] = post;
-				this.posts = updatedPost;
-				this.postsUpdated.next([...this.posts]);
+				
 				this.router.navigate(['/'])
 			})
 	}
