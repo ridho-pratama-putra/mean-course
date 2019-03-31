@@ -55,15 +55,22 @@ router.get('', (req, res, next) => {
     const pageSize = +req.query.pageSize;
     const currentPage = +req.query.page;
     const postQuery = Post.find();
+    let fetchedPost;
     if (pageSize && currentPage){
         postQuery
             .skip(pageSize * (currentPage - 1))
             .limit(pageSize);
     }
-    postQuery.then(documents => {
+    postQuery
+        .then(documents => {
+            fetchedPost = documents;
+            return Post.countDocuments();
+        })
+        .then(count => {
             res.status(200).json({
                 message: "",
-                posts: documents
+                posts: fetchedPost,
+                maxCount: count
             });
         })
         .catch(err => {

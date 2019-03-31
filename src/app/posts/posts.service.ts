@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class PostsService {
 	// array in js is object, reference type. if you copy it your object in memory will still the same. you just copy the address 
 	private posts: Post[] = [];
-	private postsUpdated = new Subject<Post[]>();
+	private postsUpdated = new Subject<{posts: Post[], postCount: number}>();
 
 	constructor(private http: HttpClient, private router: Router){}
 
@@ -19,20 +19,23 @@ export class PostsService {
 		const queryParams = `?pageSize=${postPerPage}&page=${currentPage}`;
 		// dijadikan any karena id di mongodb adlaah _id. karena post di angular bentuknya id tapi dari database _id. jadi dibikin any dulu. lalu ditransforming
 		// di transforming biar cocok sama tatanan data di angular(di post model)
-		this.http.get <{message: string, posts: any}>('http://localhost:3000/api/posts' + queryParams)
+		this.http.get <{message: string, posts: any, maxPost: number}>('http://localhost:3000/api/posts' + queryParams)
 			.pipe(map((postedData) => {
-				return postedData.posts.map(post => {
-					return {
-						title: post.title,
-						content: post.content,
-						id: post._id,
-						imagePath: post.imagePath
-					}
-				})
+				return {
+					posts: postedData.posts.map(post => {
+						return {
+							title: post.title,
+							content: post.content,
+							id: post._id,
+							imagePath: post.imagePath
+						};
+					}),
+					maxPosts: postedData.maxPost
+				};
 			}))
 			.subscribe((transformedPosts) => {
-				this.posts = transformedPosts
-				this.postsUpdated.next([...this.posts])
+				this.posts = transformedPosts.posts;
+				this.postsUpdated.next({posts: [...this.posts] , postCount: transformedPosts.maxPosts});
 			});
 	}
 
